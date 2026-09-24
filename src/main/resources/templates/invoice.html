@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAX INVOICE</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #000;
+      margin: 40px;
+    }
+
+    .invoice-container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .logo {
+      width: 240px;
+      height: auto;
+    }
+
+    .invoice-title {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .salon-name {
+      margin-top: 60px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 80px;
+      font-size: 14px;
+    }
+
+    .details-left {
+      flex: 1;
+    }
+
+    .details-right {
+      flex: 1;
+      text-align: left;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 60px;
+    }
+
+    th {
+      background-color: #555;
+      color: #fff;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 500;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .total-row {
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 30px;
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    .total-row span {
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .grand-total {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 10px;
+      color: #000;
+    }
+
+    .notes {
+      margin-top: 50px;
+      font-size: 14px;
+    }
+
+    .terms {
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <div class="header">
+      <div>
+        
+      </div>
+      <div class="invoice-title">TAX INVOICE</div>
+    </div>
+
+    <div class="salon-name">SALON</div>
+
+    <div class="details">
+      <div class="details-left">
+        <div>Bill To: <span th:text="${customerName}"></span></div>
+      </div>
+      <div class="details-right">
+        <div>Invoice ID: <span th:text="${invoiceNumber}"></span></div>
+        <div>Invoice Date: <span th:text="${date}"></span></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- ✅ Loop through each service line -->
+        <tr th:each="line : ${serviceName.split('\n')}">
+          <td colspan="2"><span th:text="${line}"></span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="total-row">
+      <div>
+        Subtotal <span>₹ <span th:text="${price}"></span></span>
+      </div>
+
+      <!-- ✅ Show discount only if applied -->
+      <div th:if="${discountAmount > 0}">
+        Discount Applied 
+        <span>
+          <span th:text="${discountType}"></span>
+          (<span th:text="${manualDiscountPercent}"></span>%)
+          - ₹<span th:text="${discountAmount}"></span>
+        </span>
+      </div>
+
+      <div>
+        GST (5%) <span>₹ <span th:text="${gstAmount}"></span></span>
+      </div>
+
+      <div class="grand-total">
+        Grand Total <span>₹ <span th:text="${finalAmount}"></span></span>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Notes:</strong><br />
+      Please visit us next time.
+    </div>
+
+    <div class="terms">
+      <strong>Terms &amp; Conditions:</strong><br />
+      Members only discount.
+    </div>
+  </div> <!-- ✅ closes .invoice-container -->
+</body>
+</html>

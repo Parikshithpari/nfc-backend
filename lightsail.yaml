@@ -1,0 +1,10 @@
+version: 1
+serviceName: nfc-backend
+containers:
+  nfc-backend:
+    image: nfc-backend:latest
+    ports:
+      9090: HTTP
+publicEndpoint:
+  containerName: nfc-backend
+  containerPort: 9090
