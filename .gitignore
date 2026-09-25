@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+nfc-backend.tar
+nfc-backend.tar.gz
