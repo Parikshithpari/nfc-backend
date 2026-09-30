@@ -1,51 +1,42 @@
 package com.example.demo.config;
 
+
 import java.util.List;
+
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
-public class CORSConfig implements WebMvcConfigurer {
+public class CORSConfig {
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowedOrigins("https://gconnectt.com", "https://gconnectt.com/salon")
-				.allowedOriginPatterns("https://*.ngrok-free.dev", "https://*.ngrok.io")
-				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-				.allowedHeaders("*")
-				.exposedHeaders("Access-Control-Allow-Origin")
-				.allowCredentials(true)
-				.maxAge(3600);
-	}
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
 
-	@Bean
-	public FilterRegistrationBean<CorsFilter> corsFilter() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.setAllowedOrigins(List.of("https://gconnectt.com", "https://gconnectt.com/salon"));
-		config.addAllowedOriginPattern("https://*.ngrok-free.dev");
-		config.addAllowedOriginPattern("https://*.ngrok.io");
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-		config.setAllowedHeaders(List.of("*"));
-		config.setExposedHeaders(List.of("Access-Control-Allow-Origin", "ngrok-skip-browser-warning"));
-		config.setMaxAge(3600L);
+        // Origins = scheme + host (+ port). No paths, no trailing slash.
+        config.setAllowedOrigins(List.of(
+                "https://gconnectt.com",
+                "https://www.gconnectt.com"   // remove if you don't use www
+        ));
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);   // fine because origins are explicit (not "*")
+        config.setMaxAge(3600L);
 
-		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-		bean.setOrder(0);
-		return bean;
-	}
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 }
